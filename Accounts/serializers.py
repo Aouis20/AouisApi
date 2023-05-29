@@ -23,8 +23,8 @@ class CreateUserSerializer(serializers.Serializer):
         return confirm
 
     def validate_email(self, email):
-        user = User.objects.filter(email=email).exists()
-        if user:
+        email = User.objects.filter(email=email).exists()
+        if email:
             raise ValidationError("Email already registered")
 
         return email
