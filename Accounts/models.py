@@ -37,6 +37,7 @@ class User(AbstractBaseUser):
     archived_at = models.DateTimeField(default=None, null=True)
 
     email = models.EmailField(unique=True)
+    # phone_number = models.CharField(max_length=20)
     username = models.CharField(max_length=128, null=True, blank=True)
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
