@@ -57,11 +57,6 @@ class ProductViewSet(
             user=request.user.username,
             title=title,
             description=description,
-            address_line1=address_line1,
-            address_line2=address_line2,
-            city=city,
-            state=state,
-            postal_code=postal_code,
         )
 
         product.save()

@@ -31,11 +31,6 @@ class Product(models.Model):
         choices=ProductStatusEnum.choices,
         default=ProductStatusEnum.FOR_SALE,
     )
-    address_line1 = models.CharField(max_length=255)
-    address_line2 = models.CharField(max_length=255, blank=True)
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
-    postal_code = models.CharField(max_length=20)
 
     def get_full_address(self):
         address_parts = [

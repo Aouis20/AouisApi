@@ -37,10 +37,17 @@ class User(AbstractBaseUser):
     archived_at = models.DateTimeField(default=None, null=True)
 
     email = models.EmailField(unique=True)
-    # phone_number = models.CharField(max_length=20)
     username = models.CharField(max_length=128, null=True, blank=True)
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
+
+    # User Information
+    # phone_number = models.CharField(max_length=20)
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    postal_code = models.CharField(max_length=20)
 
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
