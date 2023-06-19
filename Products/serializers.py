@@ -2,25 +2,24 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from .models import Product
 from Categories.models import Category
+from Categories.serializers import CategorySerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+
     class Meta:
         model = Product
         fields = "__all__"
 
 
 class CreateProductSerializer(serializers.Serializer):
-    category = serializers.CharField()
-    address_line1 = serializers.CharField()
-    city = serializers.CharField()
-    state = serializers.CharField()
-    postal_code = serializers.CharField()
+    category = serializers.IntegerField()
+    title = serializers.CharField(max_length=255)
+    description = serializers.CharField()
 
-    def validate_category(self, category):
-        category = Category.objects.get(name=category)
-
-        if not category:
+    def validate_category(self, category_id):
+        if not Category.objects.filter(id=category_id):
             raise ValidationError("Category does not exists")
 
-        return category
+        return category_id

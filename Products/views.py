@@ -12,6 +12,8 @@ from Accounts.permissions import UserPermissions
 from Categories.models import Category
 from .serializers import ProductSerializer, CreateProductSerializer
 from .models import Product
+from django.db import transaction
+from rest_framework.exceptions import APIException, ValidationError
 
 
 class ProductViewSet(
@@ -30,6 +32,7 @@ class ProductViewSet(
             "default": self.serializer_class,
             "create": CreateProductSerializer,
         }
+        print(self.action)
         if self.action in serializers.keys():
             return serializers[self.action]
         else:
@@ -40,20 +43,29 @@ class ProductViewSet(
         serialized_data = serializer(data=request.data)
         serialized_data.is_valid(raise_exception=True)
 
+        category_id = serialized_data.data.get("category")
         title = serialized_data.data.get("title")
         description = serialized_data.data.get("description")
 
-        print(category)
+        category = Category.objects.get(id=category_id)
+        print("azer", request.user)
 
-        category = Category.objects.get(name=category)
+        try:
+            product = Product(
+                category=category,
+                user=request.user,
+                title=title,
+                description=description,
+            )
 
-        product = Product(
-            category=category,
-            user=request.user.username,
-            title=title,
-            description=description,
-        )
+            product.save()
 
-        product.save()
+            return Response(ProductSerializer(product).data)
 
-        return Response(ProductSerializer(product).data)
+        except ValidationError as e:
+            raise e
+        except Exception as e:
+            if isinstance(e, ValidationError):
+                raise e
+            print(e)
+            raise APIException("Cannot create this Product")
