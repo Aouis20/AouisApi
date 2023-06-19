@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  web:
+    container_name: aouis-api
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./AouisApi:/app/AouisApi
+      - ./Accounts:/app/Accounts
+      - ./Products:/app/Products
+      - ./Categories:/app/Categories
+    ports:
+      - 8000:8000
