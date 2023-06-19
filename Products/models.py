@@ -23,7 +23,7 @@ class Product(models.Model):
     updated_at = models.DateField(auto_now=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+
     title = models.CharField(max_length=255)
     description = models.TextField()
     status = models.CharField(
@@ -31,13 +31,3 @@ class Product(models.Model):
         choices=ProductStatusEnum.choices,
         default=ProductStatusEnum.FOR_SALE,
     )
-
-    def get_full_address(self):
-        address_parts = [
-            self.address_line1,
-            self.address_line2,
-            self.city,
-            self.state,
-            self.postal_code,
-        ]
-        return ", ".join(filter(None, address_parts))

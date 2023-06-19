@@ -67,3 +67,13 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+
+    def get_full_address(self):
+        address_parts = [
+            self.address_line1,
+            self.address_line2,
+            self.city,
+            self.state,
+            self.postal_code,
+        ]
+        return ", ".join(filter(None, address_parts))
