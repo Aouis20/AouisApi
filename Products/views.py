@@ -42,11 +42,6 @@ class ProductViewSet(
 
         title = serialized_data.data.get("title")
         description = serialized_data.data.get("description")
-        address_line1 = serialized_data.data.get("address_line1")
-        address_line2 = serialized_data.data.get("address_line2")
-        city = serialized_data.data.get("city")
-        state = serialized_data.data.get("state")
-        postal_code = serialized_data.data.get("postal_code")
 
         print(category)
 
