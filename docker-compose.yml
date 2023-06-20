@@ -12,3 +12,13 @@ services:
       - ./Categories:/app/Categories
     ports:
       - 8000:8000
+
+  db:
+    container_name: aouis-db
+    image: postgres
+    volumes:
+      - .data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
