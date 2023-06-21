@@ -1,5 +1,5 @@
 FROM python:3.9.14-buster
-WORKDIR /app
+WORKDIR /api
 
 RUN apt-get update && apt-get install -y postgresql postgresql-contrib
 
