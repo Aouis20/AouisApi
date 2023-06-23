@@ -1,19 +1,8 @@
 version: "3"
 
 services:
-  web:
-    container_name: aouis-api
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./AouisApi:/app/AouisApi
-      - ./Accounts:/app/Accounts
-      - ./Products:/app/Products
-      - ./Categories:/app/Categories
-    ports:
-      - 8000:8000
 
-  db:
+  postgres:
     container_name: aouis-db
     image: postgres
     volumes:
@@ -22,3 +11,14 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+  api:
+    container_name: aouis-api
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
