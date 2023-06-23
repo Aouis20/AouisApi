@@ -32,7 +32,6 @@ class ProductViewSet(
             "default": self.serializer_class,
             "create": CreateProductSerializer,
         }
-        print(self.action)
         if self.action in serializers.keys():
             return serializers[self.action]
         else:
@@ -48,17 +47,14 @@ class ProductViewSet(
         description = serialized_data.data.get("description")
 
         category = Category.objects.get(id=category_id)
-        print("azer", request.user)
 
         try:
-            product = Product(
+            product = Product.objects.create(
                 category=category,
                 user=request.user,
                 title=title,
                 description=description,
             )
-
-            product.save()
 
             return Response(ProductSerializer(product).data)
 

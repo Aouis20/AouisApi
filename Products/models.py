@@ -21,9 +21,6 @@ class Product(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
     title = models.CharField(max_length=255)
     description = models.TextField()
     status = models.CharField(
@@ -31,3 +28,7 @@ class Product(models.Model):
         choices=ProductStatusEnum.choices,
         default=ProductStatusEnum.FOR_SALE,
     )
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
