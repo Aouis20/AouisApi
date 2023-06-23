@@ -1,7 +1,6 @@
 from django.db import transaction
 from django.utils import timezone
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import (
@@ -22,11 +21,12 @@ class UserViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (UserPermissions(),)
+    permission_classes = (UserPermissions,)
 
     def get_serializer_class(self):
         serializers = {
@@ -37,17 +37,6 @@ class UserViewSet(
             return serializers[self.action]
         else:
             return serializers["default"]
-
-    def get_permissions(self):
-        permissions = {"default": self.permission_classes, "create": (AllowAny(),)}
-
-        if self.action in permissions.keys():
-            return permissions[self.action]
-        else:
-            return permissions["default"]
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()

@@ -41,6 +41,14 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
 
+    # User Information
+    # phone_number = models.CharField(max_length=20)
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    postal_code = models.CharField(max_length=20)
+
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -59,3 +67,13 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+
+    def get_full_address(self):
+        address_parts = [
+            self.address_line1,
+            self.address_line2,
+            self.city,
+            self.state,
+            self.postal_code,
+        ]
+        return ", ".join(filter(None, address_parts))

@@ -1,5 +1,7 @@
 {
     "conventionalCommits.scopes": [
-        "Accounts"
+        "Accounts",
+        "Categories",
+        "Products"
     ]
 }

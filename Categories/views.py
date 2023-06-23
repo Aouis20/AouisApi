@@ -21,13 +21,3 @@ class CategoryViewSet(
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (UserPermissions,)
-
-    def get_serializer_class(self):
-        serializers = {
-            "default": super().get_serializer_class(),
-            "create": CreateCategorySerializer,
-        }
-        if self.action in serializers.keys():
-            return serializers[self.action]
-        else:
-            return serializers["default"]
