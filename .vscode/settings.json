@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "Accounts",
         "Categories",
-        "Products"
+        "Products",
+        "Transactions"
     ]
 }
