@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-import os
+from os import getenv
+from json import loads
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,11 +74,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-]
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://127.0.0.1:9000",
 ]
 
 ROOT_URLCONF = "AouisApi.urls"
@@ -164,3 +160,19 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "Accounts.User"
+
+FRONT_BASE_URL = getenv("FRONT_BASE_URL", "http://localhost:3000")
+
+ALLOWED_HOSTS = []
+if getenv("ALLOWED_HOSTS"):
+    ALLOWED_HOSTS.extend(loads(getenv("ALLOWED_HOSTS")))
+
+# CORS_ALLOWED_ORIGINS = []
+# if getenv("CORS_ORIGINS"):
+#     CORS_ALLOWED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
+
+CSRF_TRUSTED_ORIGINS = []
+if getenv("CORS_ORIGINS"):
+    CSRF_TRUSTED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
