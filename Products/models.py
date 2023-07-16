@@ -23,6 +23,7 @@ class Product(models.Model):
     updated_at = models.DateField(auto_now=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
+    images = models.JSONField(default=list)
     status = models.CharField(
         max_length=255,
         choices=ProductStatusEnum.choices,
