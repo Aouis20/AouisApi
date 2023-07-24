@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
+import datetime
 from os import getenv
 from json import loads
 
@@ -57,11 +57,18 @@ REST_FRAMEWORK = {
     "UNAUTHENTICATED_USER": None,
 }
 
+# JWT Dev
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "ACCESS_TOKEN_LIFETIME": (
+        datetime.timedelta(hours=24)
+        if getenv("TOKEN_TIMEOUT_DEV")
+        else datetime.timedelta(minutes=5)
+    ),
+    "REFRESH_TOKEN_LIFETIME": (
+        datetime.timedelta(days=30)
+        if getenv("TOKEN_TIMEOUT_DEV")
+        else datetime.timedelta(days=1)
+    ),
 }
 
 MIDDLEWARE = [

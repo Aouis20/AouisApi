@@ -3,6 +3,7 @@ from rest_framework.mixins import (
     CreateModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    DestroyModelMixin,
 )
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
@@ -10,6 +11,7 @@ from rest_framework.response import Response
 
 from Accounts.permissions import UserPermissions
 from Categories.models import Category
+from Accounts.models import User
 from .serializers import ProductSerializer, CreateProductSerializer
 from .models import Product
 from django.db import transaction
@@ -22,6 +24,7 @@ class ProductViewSet(
     UpdateModelMixin,
     CreateModelMixin,
     GenericViewSet,
+    DestroyModelMixin,
 ):
     queryset = Category.objects.all()
     serializer_class = ProductSerializer
@@ -47,16 +50,26 @@ class ProductViewSet(
         description = serialized_data.data.get("description")
 
         category = Category.objects.get(id=category_id)
+        user = User.objects.get(email=request.user)
+
+        # Sur le front avoir un select qui permet de choisir sir on veux prendre son adresse ou non (TRUE or FALSe)
 
         try:
-            product = Product.objects.create(
-                category=category,
-                user=request.user,
-                title=title,
-                description=description,
-            )
+            with transaction.atomic():
+                product = Product(
+                    category=category,
+                    user=user,
+                    title=title,
+                    description=description,
+                    images=[
+                        "https://cdn.pixabay.com/photo/2023/07/17/13/50/baby-snow-leopard-8132690_1280.jpg",
+                        "https://cdn.pixabay.com/photo/2012/03/01/00/28/animal-19621_1280.jpg",
+                        "https://cdn.pixabay.com/photo/2023/06/27/10/51/man-8091933_1280.jpg",
+                    ],
+                )
+                product.save()
 
-            return Response(ProductSerializer(product).data)
+                return Response(ProductSerializer(product).data)
 
         except ValidationError as e:
             raise e

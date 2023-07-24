@@ -3,10 +3,12 @@ from rest_framework import serializers
 from .models import Product
 from Categories.models import Category
 from Categories.serializers import CategorySerializer
+from Accounts.serializers import UserSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
+    # category = CategorySerializer()
+    # user = UserSerializer()
 
     class Meta:
         model = Product
