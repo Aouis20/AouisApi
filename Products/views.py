@@ -5,17 +5,18 @@ from rest_framework.mixins import (
     UpdateModelMixin,
     DestroyModelMixin,
 )
+from django.db import transaction
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 
+from .models import Product
+from .serializers import ProductSerializer, CreateProductSerializer
 
 from Accounts.permissions import UserPermissions
-from Categories.models import Category
 from Accounts.models import User
-from .serializers import ProductSerializer, CreateProductSerializer
-from .models import Product
-from django.db import transaction
-from rest_framework.exceptions import APIException, ValidationError
+from Categories.models import Category
+from AouisApi.pagination import CustomPagination
 
 
 class ProductViewSet(
@@ -23,12 +24,13 @@ class ProductViewSet(
     ListModelMixin,
     UpdateModelMixin,
     CreateModelMixin,
-    GenericViewSet,
     DestroyModelMixin,
+    GenericViewSet,
 ):
-    queryset = Category.objects.all()
+    queryset = Product.objects.all().order_by("id")
     serializer_class = ProductSerializer
     permission_classes = (UserPermissions,)
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         serializers = {
@@ -48,6 +50,10 @@ class ProductViewSet(
         category_id = serialized_data.data.get("category")
         title = serialized_data.data.get("title")
         description = serialized_data.data.get("description")
+        price = serialized_data.data.get("price")
+        visibility = serialized_data.data.get("visibility", True)
+        payment = serialized_data.data.get("payment", None)
+        status = serialized_data.data.get("status", None)
 
         category = Category.objects.get(id=category_id)
         user = User.objects.get(email=request.user)
@@ -57,16 +63,25 @@ class ProductViewSet(
         try:
             with transaction.atomic():
                 product = Product(
-                    category=category,
-                    user=user,
                     title=title,
                     description=description,
+                    price=price,
+                    visibility=visibility,
                     images=[
                         "https://cdn.pixabay.com/photo/2023/07/17/13/50/baby-snow-leopard-8132690_1280.jpg",
                         "https://cdn.pixabay.com/photo/2012/03/01/00/28/animal-19621_1280.jpg",
                         "https://cdn.pixabay.com/photo/2023/06/27/10/51/man-8091933_1280.jpg",
                     ],
+                    category=category,
+                    user=user,
                 )
+
+                if payment:
+                    product.payment_type = payment
+
+                if status:
+                    product.status = status
+
                 product.save()
 
                 return Response(ProductSerializer(product).data)
