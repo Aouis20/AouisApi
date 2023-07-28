@@ -20,10 +20,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class CreateProductSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
+    description = serializers.CharField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     payment = serializers.CharField(max_length=255, required=False)
     status = serializers.CharField(max_length=255, required=False)
     category = serializers.IntegerField()
+    condition = serializers.CharField(max_length=255)
 
     if (payment or price) and status == Product.ProductStatusEnum.TO_EXCHANGE:
         raise ValidationError(
@@ -33,13 +35,13 @@ class CreateProductSerializer(serializers.Serializer):
     def validate_price(self, price):
         if not price:
             raise ValidationError("Price is missing")
-        
+
         decimal_price = Decimal(price)
 
         if decimal_price < 0.01:
             raise serializers.ValidationError("Price must be at least 0.01")
 
-        if decimal_price % Decimal('0.01') != 0:
+        if decimal_price % Decimal("0.01") != 0:
             raise serializers.ValidationError(
                 "Price must have a maximum of 2 digits after the decimal point"
             )

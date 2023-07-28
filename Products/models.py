@@ -11,7 +11,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Product(models.Model):
     class PaymentTypeEnum(models.TextChoices):
         UNIQ = "UNIQ", _("Uniq")
-        PERMANENT = "PERMANENT", _("Permanent")
+        WEEKLY = "WEEKLY", _("Weekly")
+        MONTHLY = "MONTHLY", _("Monthly")
+        YEARLY = "YEARLY", _("Yearly")
 
     class ProductStatusEnum(models.TextChoices):
         SOLD = "SOLD", _("Sold")
@@ -26,6 +28,13 @@ class Product(models.Model):
         RESERVED = "RESERVED", _("Reserved")
         PENDING_PAYMENT = "PENDING_PAYMENT", _("Pending_payment")
         NEGOTIATING = "NEGOTIATING", _("Negotiating")
+
+    class ConditionStatus(models.TextChoices):
+        MINT = "MINT", _("Mint")
+        EXCELLENT = "EXCELLENT", _("EXCELLENT")
+        GOOD = "GOOD", _("Good")
+        FAIR = "FAIR", _("Fair")
+        POOR = "POOR", _("Poor")
 
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
@@ -47,6 +56,10 @@ class Product(models.Model):
         max_length=255,
         choices=ProductStatusEnum.choices,
         default=ProductStatusEnum.FOR_SALE,
+    )
+    condition = models.CharField(
+        max_length=255,
+        choices=ConditionStatus.choices,
     )
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

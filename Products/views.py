@@ -16,7 +16,7 @@ from .serializers import ProductSerializer, CreateProductSerializer
 from Accounts.permissions import UserPermissions
 from Accounts.models import User
 from Categories.models import Category
-from AouisApi.pagination import CustomPagination
+from AouisApi.pagination import ProductPagination
 
 
 class ProductViewSet(
@@ -30,7 +30,7 @@ class ProductViewSet(
     queryset = Product.objects.all().order_by("id")
     serializer_class = ProductSerializer
     permission_classes = (UserPermissions,)
-    pagination_class = CustomPagination
+    pagination_class = ProductPagination
 
     def get_serializer_class(self):
         serializers = {
@@ -49,16 +49,15 @@ class ProductViewSet(
 
         category_id = serialized_data.data.get("category")
         title = serialized_data.data.get("title")
-        description = serialized_data.data.get("description")
+        description = serialized_data.data.get("description", None)
         price = serialized_data.data.get("price")
         visibility = serialized_data.data.get("visibility", True)
         payment = serialized_data.data.get("payment", None)
         status = serialized_data.data.get("status", None)
+        condition = serialized_data.data.get("condition", None)
 
         category = Category.objects.get(id=category_id)
         user = User.objects.get(email=request.user)
-
-        # Sur le front avoir un select qui permet de choisir sir on veux prendre son adresse ou non (TRUE or FALSe)
 
         try:
             with transaction.atomic():
@@ -67,6 +66,7 @@ class ProductViewSet(
                     description=description,
                     price=price,
                     visibility=visibility,
+                    condition=condition,
                     images=[
                         "https://cdn.pixabay.com/photo/2023/07/17/13/50/baby-snow-leopard-8132690_1280.jpg",
                         "https://cdn.pixabay.com/photo/2012/03/01/00/28/animal-19621_1280.jpg",
