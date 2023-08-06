@@ -37,6 +37,10 @@ class User(AbstractBaseUser):
         MR = "MR", _("Mr")
         MRS = "MRS", _("Mrs")
 
+    class LanguageType(models.TextChoices):
+        FR = "FR", _("Fr")
+        EN = "EN", _("En")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     archived_at = models.DateTimeField(default=None, null=True)
@@ -45,7 +49,10 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
     salutation = models.CharField(
-        max_length=3, choices=SalutationType.choices, default="Mr"
+        max_length=3, choices=SalutationType.choices, default=SalutationType.MR
+    )
+    language = models.CharField(
+        max_length=3, choices=LanguageType.choices, default=LanguageType.FR
     )
 
     # Contact Information (to validate on signing up)
