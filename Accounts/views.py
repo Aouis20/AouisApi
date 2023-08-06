@@ -3,18 +3,13 @@ from django.utils import timezone
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import (
-    TokenObtainPairSerializer,
-)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from Accounts.models import User
 from Accounts.permissions import UserPermissions
 
-from .serializers import (
-    CreateUserSerializer,
-    UserSerializer,
-)
+from .serializers import CreateUserSerializer, UserSerializer
 
 
 class UserViewSet(
@@ -47,7 +42,10 @@ class UserViewSet(
         try:
             with transaction.atomic():
                 user = User(
+                    first_name=serialized_data.validated_data["first_name"],
+                    last_name=serialized_data.validated_data["last_name"],
                     email=serialized_data.validated_data["email"],
+                    phone_number=serialized_data.validated_data["phone_number"],
                     is_active=True,
                 )
                 user.set_password(serialized_data.validated_data["password"])

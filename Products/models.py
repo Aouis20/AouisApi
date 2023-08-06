@@ -1,11 +1,10 @@
-from django.db import models
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 from django.db import models
-from Categories.models import Category
-from Accounts.models import User
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
+
+from Categories.models import Category
 
 
 class Product(models.Model):
@@ -62,5 +61,5 @@ class Product(models.Model):
         choices=ConditionStatus.choices,
     )
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey("Categories.Category", on_delete=models.CASCADE)
+    owner = models.ForeignKey("Accounts.User", on_delete=models.CASCADE)
