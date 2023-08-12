@@ -1,17 +1,18 @@
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from decimal import Decimal
 
-from .models import Product
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
+from Accounts.serializers import UserSerializer
 from Categories.models import Category
 from Categories.serializers import CategorySerializer
-from Accounts.serializers import UserSerializer
+
+from .models import Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
-    user = UserSerializer()
+    owner = UserSerializer()
 
     class Meta:
         model = Product
@@ -53,6 +54,12 @@ class CreateProductSerializer(serializers.Serializer):
             raise ValidationError("Payment type does not exists")
 
         return payment
+
+    def validate_condition(self, condition):
+        if condition not in Product.ConditionStatus.values:
+            raise ValidationError("Condition type does not exists")
+
+        return condition
 
     def validate_status(self, status):
         # Default status: FOR_SALE

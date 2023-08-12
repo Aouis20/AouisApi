@@ -57,7 +57,7 @@ class ProductViewSet(
         condition = serialized_data.data.get("condition", None)
 
         category = Category.objects.get(id=category_id)
-        user = User.objects.get(email=request.user)
+        owner = User.objects.get(email=request.user)
 
         try:
             with transaction.atomic():
@@ -73,7 +73,7 @@ class ProductViewSet(
                         "https://cdn.pixabay.com/photo/2023/06/27/10/51/man-8091933_1280.jpg",
                     ],
                     category=category,
-                    user=user,
+                    owner=owner,
                 )
 
                 if payment:
