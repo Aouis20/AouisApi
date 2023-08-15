@@ -18,6 +18,8 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = "__all__"
 
+class GetProductListSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(required=False)
 
 class CreateProductSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
