@@ -22,7 +22,7 @@ class Product(models.Model):
         TO_EXCHANGE = "TO_EXCHANGE", _("To exchange")
 
         REFUNDED = "REFUNDED", _("Refunded")
-        TO_REFUNDED = "TO_REFUNDED", _("to_Refunded")
+        PENDING_REFUND = "PENDING_REFUND", _("Pending_refund")
 
         RESERVED = "RESERVED", _("Reserved")
         PENDING_PAYMENT = "PENDING_PAYMENT", _("Pending_payment")
