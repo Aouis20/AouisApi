@@ -1,14 +1,14 @@
 from rest_framework.mixins import (
-    RetrieveModelMixin,
     CreateModelMixin,
     ListModelMixin,
+    RetrieveModelMixin,
     UpdateModelMixin,
 )
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Category
-from .serializers import CategorySerializer, CreateCategorySerializer
-from Accounts.permissions import UserPermissions
+from .serializers import CategorySerializer
 
 
 class CategoryViewSet(
@@ -20,4 +20,4 @@ class CategoryViewSet(
 ):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (UserPermissions,)
+    permission_classes = (AllowAny,)
