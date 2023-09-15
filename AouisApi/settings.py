@@ -30,8 +30,6 @@ SECRET_KEY = "django-insecure-*(@a-6l2e_!pg7s4-&cfx3w(7yp#(h%1*ir1+nlll=p4a8%5=v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -177,7 +175,7 @@ AUTH_USER_MODEL = "Accounts.User"
 
 FRONT_BASE_URL = os.getenv("FRONT_BASE_URL", "http://localhost:3000")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 if os.getenv("ALLOWED_HOSTS"):
     ALLOWED_HOSTS.extend(loads(os.getenv("ALLOWED_HOSTS")))
 
