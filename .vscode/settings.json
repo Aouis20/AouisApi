@@ -3,6 +3,7 @@
         "Accounts",
         "Categories",
         "Products",
-        "Transactions"
+        "Transactions",
+        "Settings"
     ]
 }

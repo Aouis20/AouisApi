@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class UserDBManager(BaseUserManager):
@@ -32,27 +33,48 @@ class UserDBManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    class SalutationType(models.TextChoices):
+        MR = "MR", _("Mr")
+        MRS = "MRS", _("Mrs")
+
+    class LanguageType(models.TextChoices):
+        FR = "FR", _("Fr")
+        EN = "EN", _("En")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     archived_at = models.DateTimeField(default=None, null=True)
 
-    email = models.EmailField(unique=True)
     username = models.CharField(max_length=128, null=True, blank=True)
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
+    salutation = models.CharField(
+        max_length=3, choices=SalutationType.choices, default=SalutationType.MR
+    )
+    language = models.CharField(
+        max_length=3, choices=LanguageType.choices, default=LanguageType.FR
+    )
 
-    # User Information
-    # phone_number = models.CharField(max_length=20)
+    # Contact Information (to validate on signing up)
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=20, unique=True)
+
+    # Address
     address_line1 = models.CharField(max_length=255)
     address_line2 = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=20)
 
+    # Favoris
+    favoris = models.ManyToManyField("Products.Product", blank=True)
+
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+
+    USERNAME_FIELD = "email"
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
