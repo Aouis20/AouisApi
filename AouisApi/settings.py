@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import datetime
+import os
 from json import loads
-from os import getenv
 from pathlib import Path
+
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -64,12 +66,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
         datetime.timedelta(hours=24)
-        if getenv("TOKEN_TIMEOUT_DEV")
+        if os.getenv("TOKEN_TIMEOUT_DEV")
         else datetime.timedelta(minutes=5)
     ),
     "REFRESH_TOKEN_LIFETIME": (
         datetime.timedelta(days=30)
-        if getenv("TOKEN_TIMEOUT_DEV")
+        if os.getenv("TOKEN_TIMEOUT_DEV")
         else datetime.timedelta(days=1)
     ),
 }
@@ -116,16 +118,18 @@ WSGI_APPLICATION = "AouisApi.wsgi.application"
 #     }
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "postgres",
-        "PORT": "5432",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "postgres",
+#         "USER": "postgres",
+#         "PASSWORD": "postgres",
+#         "HOST": "postgres",
+#         "PORT": "5432",
+#     }
+# }
+
+DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -162,6 +166,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+MEDIA_URL = "media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -170,18 +175,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "Accounts.User"
 
-FRONT_BASE_URL = getenv("FRONT_BASE_URL", "http://localhost:3000")
+FRONT_BASE_URL = os.getenv("FRONT_BASE_URL", "http://localhost:3000")
 
 ALLOWED_HOSTS = []
-if getenv("ALLOWED_HOSTS"):
-    ALLOWED_HOSTS.extend(loads(getenv("ALLOWED_HOSTS")))
+if os.getenv("ALLOWED_HOSTS"):
+    ALLOWED_HOSTS.extend(loads(os.getenv("ALLOWED_HOSTS")))
 
 # CORS_ALLOWED_ORIGINS = []
-# if getenv("CORS_ORIGINS"):
-#     CORS_ALLOWED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
+# if os.getenv("CORS_ORIGINS"):
+#     CORS_ALLOWED_ORIGINS.extend(loads(os.getenv("CORS_ORIGINS")))
 
 CSRF_TRUSTED_ORIGINS = []
-if getenv("CORS_ORIGINS"):
-    CSRF_TRUSTED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
+if os.getenv("CORS_ORIGINS"):
+    CSRF_TRUSTED_ORIGINS.extend(loads(os.getenv("CORS_ORIGINS")))
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
