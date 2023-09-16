@@ -175,16 +175,6 @@ AUTH_USER_MODEL = "Accounts.User"
 
 FRONT_BASE_URL = os.getenv("FRONT_BASE_URL", "http://localhost:3000")
 
-ALLOWED_HOSTS = ['*']
-if os.getenv("ALLOWED_HOSTS"):
-    ALLOWED_HOSTS.extend(loads(os.getenv("ALLOWED_HOSTS")))
-
-# CORS_ALLOWED_ORIGINS = []
-# if os.getenv("CORS_ORIGINS"):
-#     CORS_ALLOWED_ORIGINS.extend(loads(os.getenv("CORS_ORIGINS")))
-
-CSRF_TRUSTED_ORIGINS = []
-if os.getenv("CORS_ORIGINS"):
-    CSRF_TRUSTED_ORIGINS.extend(loads(os.getenv("CORS_ORIGINS")))
-
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+ALLOWED_HOSTS = [FRONT_BASE_URL]
+CORS_ALLOWED_ORIGINS = [FRONT_BASE_URL]
+CSRF_TRUSTED_ORIGINS = [FRONT_BASE_URL]
