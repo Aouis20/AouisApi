@@ -157,8 +157,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-FRONT_BASE_URL = os.environ.get("FRONT_BASE_URL", "http://localhost:3000")
-
+FRONT_BASE_URL = os.environ.get("FRONT_BASE_URL").split(" ")
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
