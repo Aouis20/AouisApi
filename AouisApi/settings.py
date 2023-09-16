@@ -175,6 +175,6 @@ AUTH_USER_MODEL = "Accounts.User"
 
 FRONT_BASE_URL = os.getenv("FRONT_BASE_URL", "http://localhost:3000")
 
-ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS", "localhost")]
-CORS_ALLOWED_ORIGINS = [os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")]
-CSRF_TRUSTED_ORIGINS = [os.getenv("CSRF_TRUSTED_ORIGINS", "localhost")]
+ALLOWED_HOSTS = ["aouisapi.onrender.com", "127.0.0.1", "localhost"]
+CORS_ALLOWED_ORIGINS = ["https://aouisapi.onrender.com", "http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = ["aouisapi.onrender.com", "127.0.0.1", "localhost"]
