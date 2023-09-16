@@ -58,12 +58,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
         datetime.timedelta(hours=24)
-        if os.getenv("TOKEN_TIMEOUT_DEV")
+        if os.environ.get("TOKEN_TIMEOUT_DEV")
         else datetime.timedelta(minutes=5)
     ),
     "REFRESH_TOKEN_LIFETIME": (
         datetime.timedelta(days=30)
-        if os.getenv("TOKEN_TIMEOUT_DEV")
+        if os.environ.get("TOKEN_TIMEOUT_DEV")
         else datetime.timedelta(days=1)
     ),
 }
@@ -160,6 +160,5 @@ DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 FRONT_BASE_URL = os.environ.get("FRONT_BASE_URL", "http://localhost:3000")
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
-CORS_ALLOWED_ORIGINS = os.environ.get("ALLOWED_HOSTS").split(" ")
-CSRF_TRUSTED_ORIGINS = os.environ.get("ALLOWED_HOSTS").split(" ")
-
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
