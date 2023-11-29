@@ -16,7 +16,7 @@ from Accounts.permissions import UserPermissions
 from AouisApi.pagination import ProductPagination
 from Categories.models import Category
 
-from .models import Product
+from .models import Product, ProductImage
 from .serializers import (
     CreateProductSerializer,
     GetProductListSerializer,
@@ -79,26 +79,26 @@ class ProductViewSet(
         payment = serialized_data.data.get("payment", None)
         status = serialized_data.data.get("status", None)
         condition = serialized_data.data.get("condition", None)
+        uploaded_images = serialized_data.data.get("uploaded_images", [])
 
         category = Category.objects.get(id=category_id)
         owner = User.objects.get(email=request.user)
 
         try:
             with transaction.atomic():
-                product = Product(
+                product = Product.objects.create(
                     title=title,
                     description=description,
                     price=price,
                     visibility=visibility,
                     condition=condition,
-                    images=[
-                        "https://cdn.pixabay.com/photo/2023/07/17/13/50/baby-snow-leopard-8132690_1280.jpg",
-                        "https://cdn.pixabay.com/photo/2012/03/01/00/28/animal-19621_1280.jpg",
-                        "https://cdn.pixabay.com/photo/2023/06/27/10/51/man-8091933_1280.jpg",
-                    ],
                     category=category,
                     owner=owner,
                 )
+
+                if len(uploaded_images):
+                    for image in uploaded_images:
+                        ProductImage.objects.create(product=product, image=image)
 
                 if payment:
                     product.payment_type = payment

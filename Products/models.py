@@ -1,10 +1,6 @@
 from django.core.validators import MinValueValidator
-
-# Create your models here.
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from Categories.models import Category
 
 
 class Product(models.Model):
@@ -37,6 +33,7 @@ class Product(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    archived_at = models.DateTimeField(default=None, null=True)
     title = models.CharField(max_length=255)
     description = models.CharField(blank=True, null=True)
     visibility = models.BooleanField(default=True)
@@ -50,7 +47,6 @@ class Product(models.Model):
         choices=PaymentTypeEnum.choices,
         default=PaymentTypeEnum.UNIQ,
     )
-    images = models.JSONField(default=list)
     status = models.CharField(
         max_length=255,
         choices=ProductStatusEnum.choices,
@@ -63,3 +59,10 @@ class Product(models.Model):
 
     category = models.ForeignKey("Categories.Category", on_delete=models.CASCADE)
     owner = models.ForeignKey("Accounts.User", on_delete=models.CASCADE)
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="images"
+    )
+    image = models.ImageField(upload_to="images", default="", null=True, blank=True)

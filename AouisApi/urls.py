@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -18,4 +17,4 @@ urlpatterns = [
     path("transactions/", include("Transactions.urls")),
 ]
 
-urlpatterns += staticfiles_urlpatterns()
+# urlpatterns += staticfiles_urlpatterns()

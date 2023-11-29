@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.utils import timezone
+from django.utils.timezone import get_default_timezone()
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
@@ -74,7 +74,7 @@ class TokenObtainViewSet(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
 
         user = User.objects.get(email=email)
-        user.last_login = timezone.now().date()
+        user.last_login = get_default_timezone()
         user.save()
 
         return response

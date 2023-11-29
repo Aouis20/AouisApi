@@ -11,11 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import datetime
-import os
 from json import loads
+from os import getenv
 from pathlib import Path
-
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = "django-insecure-*(@a-6l2e_!pg7s4-&cfx3w(7yp#(h%1*ir1+nlll=p4a8%5=v"
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 # Application definition
 
@@ -58,12 +61,12 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
         datetime.timedelta(hours=24)
-        if os.environ.get("TOKEN_TIMEOUT_DEV")
+        if getenv("TOKEN_TIMEOUT_DEV")
         else datetime.timedelta(minutes=5)
     ),
     "REFRESH_TOKEN_LIFETIME": (
         datetime.timedelta(days=30)
-        if os.environ.get("TOKEN_TIMEOUT_DEV")
+        if getenv("TOKEN_TIMEOUT_DEV")
         else datetime.timedelta(days=1)
     ),
 }
@@ -103,7 +106,16 @@ WSGI_APPLICATION = "AouisApi.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "postgres",
+        "PORT": "5432",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -140,7 +152,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
-MEDIA_URL = "media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -149,15 +160,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "Accounts.User"
 
-# CONFIGURATION
+FRONT_BASE_URL = getenv("FRONT_BASE_URL", "http://localhost:3000")
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+ALLOWED_HOSTS = []
+if getenv("ALLOWED_HOSTS"):
+    ALLOWED_HOSTS.extend(loads(getenv("ALLOWED_HOSTS")))
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+if getenv("CORS_ORIGINS"):
+    CORS_ALLOWED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
 
-FRONT_BASE_URL = os.environ.get("FRONT_BASE_URL").split(" ")
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
-CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+CSRF_TRUSTED_ORIGINS = []
+if getenv("CORS_ORIGINS"):
+    CSRF_TRUSTED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))

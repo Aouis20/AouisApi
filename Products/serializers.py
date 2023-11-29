@@ -7,19 +7,28 @@ from Accounts.serializers import UserSerializer
 from Categories.models import Category
 from Categories.serializers import CategorySerializer
 
-from .models import Product
+from .models import Product, ProductImage
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = "__all__"
 
 
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     owner = UserSerializer()
+    images = ProductImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = "__all__"
 
+
 class GetProductListSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=False)
+
 
 class CreateProductSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
@@ -29,6 +38,13 @@ class CreateProductSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=255, required=False)
     category = serializers.IntegerField()
     condition = serializers.CharField(max_length=255)
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(
+            max_length=1000000, allow_empty_file=False, use_url=False
+        ),
+        write_only=True,
+    )
+    print("Uploaded images", uploaded_images)
 
     if (payment or price) and status == Product.ProductStatusEnum.TO_EXCHANGE:
         raise ValidationError(
