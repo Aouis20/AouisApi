@@ -47,27 +47,21 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": [],
     "UNAUTHENTICATED_USER": None,
     "DEFAULT_PAGINATION_CLASS": None,
-    "PAGE_SIZE": 2,
+    "PAGE_SIZE": 10,
 }
 
 
 # JWT Dev
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
-        datetime.timedelta(hours=24)
-        if getenv("TOKEN_TIMEOUT_DEV")
-        else datetime.timedelta(minutes=5)
+        datetime.timedelta(hours=24) if getenv("TOKEN_TIMEOUT_DEV") else datetime.timedelta(minutes=5)
     ),
     "REFRESH_TOKEN_LIFETIME": (
-        datetime.timedelta(days=30)
-        if getenv("TOKEN_TIMEOUT_DEV")
-        else datetime.timedelta(days=1)
+        datetime.timedelta(days=30) if getenv("TOKEN_TIMEOUT_DEV") else datetime.timedelta(days=1)
     ),
 }
 

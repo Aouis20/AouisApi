@@ -1,3 +1,5 @@
+import re
+
 from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, ValidationError
@@ -17,11 +19,7 @@ from AouisApi.pagination import ProductPagination
 from Categories.models import Category
 
 from .models import Product, ProductImage
-from .serializers import (
-    CreateProductSerializer,
-    GetProductListSerializer,
-    ProductSerializer,
-)
+from .serializers import CreateProductSerializer, GetProductListSerializer, ProductSerializer, SearchProductSerializer
 
 
 class ProductViewSet(
@@ -42,6 +40,7 @@ class ProductViewSet(
             "default": self.serializer_class,
             "list_product": GetProductListSerializer,
             "create": CreateProductSerializer,
+            "search_product": SearchProductSerializer,
         }
         if self.action in serializers.keys():
             return serializers[self.action]
@@ -117,3 +116,49 @@ class ProductViewSet(
                 raise e
             print(e)
             raise APIException("Cannot create this Product")
+
+    @action(detail=False, methods=["post"], url_path="search")
+    def search_product(self, request):
+        serializer = self.get_serializer_class()
+        serialized_data = serializer(data=request.data)
+        serialized_data.is_valid(raise_exception=True)
+
+        title = serialized_data.data.get("title")
+        min_price = serialized_data.data.get("min_price", None)
+        max_price = serialized_data.data.get("max_price", None)
+        conditions = serialized_data.data.get("conditions")
+        categories = serialized_data.data.get("categories")
+        localization = serialized_data.data.get("localization")
+
+        filters = {
+            "title__icontains": title,
+            "condition__in": conditions,
+            "category__in": categories,
+            "owner__postal_code__icontains": localization,
+        }
+
+        productList = Product.objects.all()
+
+        for filter_key, filter_value in filters.items():
+            if filter_value is not None:
+                print("used", filter_key)
+                productList = productList.filter(**{filter_key: filter_value})
+
+        if min_price:
+            if max_price:
+                min_price = max_price if min_price > max_price else min_price
+            print("min_price", min_price)
+            productList = productList.filter(price__gte=min_price)
+
+        if max_price:
+            if min_price:
+                max_price = min_price if min_price < max_price else max_price
+            print("max_price", max_price)
+            productList = productList.filter(price__lte=max_price)
+
+        paginator = ProductPagination()
+        paginated_queryset = paginator.paginate_queryset(productList, request)
+
+        serialized_data = ProductSerializer(paginated_queryset, many=True)
+
+        return paginator.get_paginated_response(serialized_data.data)

@@ -39,17 +39,14 @@ class CreateProductSerializer(serializers.Serializer):
     category = serializers.IntegerField()
     condition = serializers.CharField(max_length=255)
     uploaded_images = serializers.ListField(
-        child=serializers.ImageField(
-            max_length=1000000, allow_empty_file=False, use_url=False
-        ),
+        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
         write_only=True,
+        required=False
     )
     print("Uploaded images", uploaded_images)
 
     if (payment or price) and status == Product.ProductStatusEnum.TO_EXCHANGE:
-        raise ValidationError(
-            "Unable to provide a payment method or price if the product is intended for exchange"
-        )
+        raise ValidationError("Unable to provide a payment method or price if the product is intended for exchange")
 
     def validate_price(self, price):
         if not price:
@@ -61,9 +58,7 @@ class CreateProductSerializer(serializers.Serializer):
             raise serializers.ValidationError("Price must be at least 0.01")
 
         if decimal_price % Decimal("0.01") != 0:
-            raise serializers.ValidationError(
-                "Price must have a maximum of 2 digits after the decimal point"
-            )
+            raise serializers.ValidationError("Price must have a maximum of 2 digits after the decimal point")
         return price
 
     def validate_payment(self, payment):
@@ -90,3 +85,12 @@ class CreateProductSerializer(serializers.Serializer):
             raise ValidationError("Category does not exists")
 
         return category_id
+
+
+class SearchProductSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=255, required=False)
+    min_price = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    max_price = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    categories = serializers.ListField(child=serializers.IntegerField(), required=False)
+    conditions = serializers.ListField(child=serializers.CharField(), required=False)
+    localization = serializers.CharField(max_length=255, required=False)
