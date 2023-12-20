@@ -48,6 +48,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=128, null=True, blank=True)
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
+    logo = models.ImageField(upload_to="")
     salutation = models.CharField(
         max_length=3, choices=SalutationType.choices, default=SalutationType.MR
     )

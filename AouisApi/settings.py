@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import datetime
 from json import loads
-from os import getenv
+from os import getenv, environ
 from pathlib import Path
+
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*(@a-6l2e_!pg7s4-&cfx3w(7yp#(h%1*ir1+nlll=p4a8%5=v"
+SECRET_KEY = environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -74,6 +76,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "AouisApi.urls"
@@ -167,3 +170,5 @@ if getenv("CORS_ORIGINS"):
 CSRF_TRUSTED_ORIGINS = []
 if getenv("CORS_ORIGINS"):
     CSRF_TRUSTED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
+
+django_heroku.settings(locals())
