@@ -1,5 +1,7 @@
-import re
+import uuid
 
+from django.conf import settings
+from django.core.files.base import ContentFile
 from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, ValidationError
@@ -30,7 +32,7 @@ class ProductViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
-    queryset = Product.objects.all().order_by("id")
+    queryset = Product.objects.all().order_by("-id")
     serializer_class = ProductSerializer
     permission_classes = (UserPermissions,)
     pagination_class = ProductPagination
@@ -66,19 +68,19 @@ class ProductViewSet(
         return paginator.get_paginated_response(serialized_data.data)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer_class()
-        serialized_data = serializer(data=request.data)
-        serialized_data.is_valid(raise_exception=True)
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        category_id = serialized_data.data.get("category")
-        title = serialized_data.data.get("title")
-        description = serialized_data.data.get("description", None)
-        price = serialized_data.data.get("price")
-        visibility = serialized_data.data.get("visibility", True)
-        payment = serialized_data.data.get("payment", None)
-        status = serialized_data.data.get("status", None)
-        condition = serialized_data.data.get("condition", None)
-        uploaded_images = serialized_data.data.get("uploaded_images", [])
+        category_id = serializer.validated_data.get("category")
+        title = serializer.validated_data.get("title")
+        description = serializer.validated_data.get("description", None)
+        price = serializer.validated_data.get("price")
+        visibility = serializer.validated_data.get("visibility", True)
+        is_service = serializer.validated_data.get("is_service", False)
+        payment = serializer.validated_data.get("payment", None)
+        status = serializer.validated_data.get("status", None)
+        condition = serializer.validated_data.get("condition", None)
+        images = serializer.validated_data.get("images")
 
         category = Category.objects.get(id=category_id)
         owner = User.objects.get(email=request.user)
@@ -92,12 +94,15 @@ class ProductViewSet(
                     visibility=visibility,
                     condition=condition,
                     category=category,
+                    is_service=is_service,
                     owner=owner,
                 )
-
-                if len(uploaded_images):
-                    for image in uploaded_images:
-                        ProductImage.objects.create(product=product, image=image)
+                for image in images:
+                    ext = image.name.split(".")[-1]
+                    name = f"{uuid.uuid4().hex}.{ext}"
+                    product_image = ProductImage.objects.create(product=product)
+                    product_image.image.save(name, ContentFile(image.read()))
+                    product_image.save()
 
                 if payment:
                     product.payment_type = payment
@@ -141,19 +146,16 @@ class ProductViewSet(
 
         for filter_key, filter_value in filters.items():
             if filter_value is not None:
-                print("used", filter_key)
                 productList = productList.filter(**{filter_key: filter_value})
 
         if min_price:
             if max_price:
                 min_price = max_price if min_price > max_price else min_price
-            print("min_price", min_price)
             productList = productList.filter(price__gte=min_price)
 
         if max_price:
             if min_price:
                 max_price = min_price if min_price < max_price else max_price
-            print("max_price", max_price)
             productList = productList.filter(price__lte=max_price)
 
         paginator = ProductPagination()

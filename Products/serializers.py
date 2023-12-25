@@ -3,6 +3,7 @@ from decimal import Decimal
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from Accounts.models import User
 from Accounts.serializers import UserSerializer
 from Categories.models import Category
 from Categories.serializers import CategorySerializer
@@ -32,18 +33,14 @@ class GetProductListSerializer(serializers.Serializer):
 
 class CreateProductSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
-    description = serializers.CharField()
+    description = serializers.CharField(required=False)
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     payment = serializers.CharField(max_length=255, required=False)
     status = serializers.CharField(max_length=255, required=False)
     category = serializers.IntegerField()
     condition = serializers.CharField(max_length=255)
-    uploaded_images = serializers.ListField(
-        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
-        write_only=True,
-        required=False
-    )
-    print("Uploaded images", uploaded_images)
+    is_service = serializers.BooleanField(default=False)
+    images = serializers.ListField(child=serializers.FileField(), required=False)
 
     if (payment or price) and status == Product.ProductStatusEnum.TO_EXCHANGE:
         raise ValidationError("Unable to provide a payment method or price if the product is intended for exchange")
