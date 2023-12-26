@@ -2,6 +2,7 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import APIException, ValidationError
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -33,6 +34,17 @@ class UserViewSet(
         else:
             return serializers["default"]
 
+    def get_permissions(self):
+        permissions = {
+            "default": self.permission_classes,
+            "create": (AllowAny(),),
+        }
+
+        if self.action in permissions.keys():
+            return permissions[self.action]
+        else:
+            return permissions["default"]
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()
         serialized_data = serializer(data=request.data)
@@ -42,12 +54,8 @@ class UserViewSet(
         try:
             with transaction.atomic():
                 user = User(
-                    first_name=serialized_data.validated_data["first_name"],
-                    last_name=serialized_data.validated_data["last_name"],
                     email=serialized_data.validated_data["email"],
-                    phone_number=serialized_data.validated_data["phone_number"],
                     is_active=True,
-                    settings={"salutation": "Mr", "language": "fr"},
                 )
                 user.set_password(serialized_data.validated_data["password"])
                 user.save()
