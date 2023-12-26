@@ -12,6 +12,7 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -34,7 +35,7 @@ class ProductViewSet(
 ):
     queryset = Product.objects.all().order_by("-id")
     serializer_class = ProductSerializer
-    permission_classes = (UserPermissions,)
+    permission_classes = (IsAuthenticatedOrReadOnly(),)
     pagination_class = ProductPagination
 
     def get_serializer_class(self):
@@ -49,16 +50,32 @@ class ProductViewSet(
         else:
             return serializers["default"]
 
+    def get_permissions(self):
+        permissions = {
+            "default": self.permission_classes,
+            "list_product": (AllowAny(),),
+            "search_product": (AllowAny(),),
+        }
+
+        if self.action in permissions.keys():
+            return permissions[self.action]
+        else:
+            return permissions["default"]
+
     @action(detail=False, methods=["post"], url_path="list-product")
     def list_product(self, request):
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_id = serializer.validated_data.get("user_id")
+        ids = serializer.validated_data.get("ids")
 
         productList = Product.objects.all()
 
         if user_id:
             productList = productList.filter(owner=user_id)
+
+        if ids:
+            productList = productList.filter(id__in=ids)
 
         paginator = ProductPagination()
         paginated_queryset = paginator.paginate_queryset(productList, request)

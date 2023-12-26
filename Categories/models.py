@@ -6,3 +6,4 @@ class Category(models.Model):
     updated_at = models.DateField(auto_now=True)
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255, default=None, null=True)
+    filters = models.JSONField(default=list)

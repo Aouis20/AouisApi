@@ -47,6 +47,7 @@ class UserViewSet(
                     email=serialized_data.validated_data["email"],
                     phone_number=serialized_data.validated_data["phone_number"],
                     is_active=True,
+                    settings={"salutation": "Mr", "language": "fr"},
                 )
                 user.set_password(serialized_data.validated_data["password"])
                 user.save()

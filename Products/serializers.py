@@ -29,6 +29,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class GetProductListSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=False)
+    ids = serializers.ListField(child=serializers.IntegerField(), required=False)
 
 
 class CreateProductSerializer(serializers.Serializer):
