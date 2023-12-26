@@ -33,7 +33,7 @@ class ProductViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
-    queryset = Product.objects.all().order_by("-id")
+    queryset = Product.objects.all().order_by("id")
     serializer_class = ProductSerializer
     permission_classes = (IsAuthenticatedOrReadOnly(),)
     pagination_class = ProductPagination
@@ -159,20 +159,22 @@ class ProductViewSet(
             "owner__postal_code__icontains": localization,
         }
 
+        filters = {key: value for key, value in filters.items() if value}
+
+        if min_price > max_price:
+            min_price, max_price = max_price, min_price
+
         productList = Product.objects.all()
 
         for filter_key, filter_value in filters.items():
             if filter_value is not None:
+                print("filter value", filter_value)
                 productList = productList.filter(**{filter_key: filter_value})
 
         if min_price:
-            if max_price:
-                min_price = max_price if min_price > max_price else min_price
             productList = productList.filter(price__gte=min_price)
 
         if max_price:
-            if min_price:
-                max_price = min_price if min_price < max_price else max_price
             productList = productList.filter(price__lte=max_price)
 
         paginator = ProductPagination()

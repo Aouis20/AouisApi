@@ -86,9 +86,9 @@ class CreateProductSerializer(serializers.Serializer):
 
 
 class SearchProductSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=255, required=False)
+    title = serializers.CharField(max_length=255, allow_blank=True, required=False)
     min_price = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     max_price = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     categories = serializers.ListField(child=serializers.IntegerField(), required=False)
     conditions = serializers.ListField(child=serializers.CharField(), required=False)
-    localization = serializers.CharField(max_length=255, required=False)
+    localization = serializers.CharField(max_length=255, allow_blank=True, required=False)
