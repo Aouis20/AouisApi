@@ -3,7 +3,7 @@ from rest_framework.permissions import BasePermission
 
 class UserPermissions(BasePermission):
     def has_permission(self, request, view=None):
-        return request.user and request.user != None
+        return request.user is not None
 
 
 class AdminPermissions(BasePermission):

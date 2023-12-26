@@ -22,7 +22,7 @@ class UserViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (UserPermissions,)
+    permission_classes = (UserPermissions(),)
 
     def get_serializer_class(self):
         serializers = {
@@ -35,10 +35,7 @@ class UserViewSet(
             return serializers["default"]
 
     def get_permissions(self):
-        permissions = {
-            "default": self.permission_classes,
-            "create": (AllowAny(),),
-        }
+        permissions = {"default": self.permission_classes, "create": (AllowAny(),)}
 
         if self.action in permissions.keys():
             return permissions[self.action]
@@ -48,7 +45,6 @@ class UserViewSet(
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()
         serialized_data = serializer(data=request.data)
-
         serialized_data.is_valid(raise_exception=True)
 
         try:

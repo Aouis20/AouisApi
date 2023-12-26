@@ -52,7 +52,7 @@ class User(AbstractBaseUser):
 
     # Contact Information (to validate on signing up)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=20, unique=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
     salutation = models.CharField(max_length=3, choices=SalutationType.choices, default=SalutationType.MR)
     language = models.CharField(max_length=3, choices=LanguageType.choices, default=LanguageType.FR)
