@@ -16,7 +16,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = "__all__"
 
-
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     owner = UserSerializer()
@@ -34,14 +33,14 @@ class GetProductListSerializer(serializers.Serializer):
 
 class CreateProductSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
-    description = serializers.CharField(required=False)
+    description = serializers.CharField(max_length=255, allow_blank=True, required=False)
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     payment = serializers.CharField(max_length=255, required=False)
     status = serializers.CharField(max_length=255, required=False)
     category = serializers.IntegerField()
     condition = serializers.CharField(max_length=255)
     is_service = serializers.BooleanField(default=False)
-    images = serializers.ListField(child=serializers.FileField(), required=False)
+    images = serializers.ListField(child=serializers.ImageField(), required=False)
 
     if (payment or price) and status == Product.ProductStatusEnum.TO_EXCHANGE:
         raise ValidationError("Unable to provide a payment method or price if the product is intended for exchange")

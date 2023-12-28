@@ -1,7 +1,4 @@
-import uuid
-
-from django.conf import settings
-from django.core.files.base import ContentFile
+from django.core.files import File
 from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, ValidationError
@@ -17,7 +14,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from Accounts.models import User
-from Accounts.permissions import UserPermissions
 from AouisApi.pagination import ProductPagination
 from Categories.models import Category
 
@@ -114,12 +110,10 @@ class ProductViewSet(
                     is_service=is_service,
                     owner=owner,
                 )
-                for image in images:
-                    ext = image.name.split(".")[-1]
-                    name = f"{uuid.uuid4().hex}.{ext}"
-                    product_image = ProductImage.objects.create(product=product)
-                    product_image.image.save(name, ContentFile(image.read()))
-                    product_image.save()
+                if images:
+                    for image in images:
+                        product_image = ProductImage.objects.create(product=product, image=image)
+                        product_image.save()
 
                 if payment:
                     product.payment_type = payment
