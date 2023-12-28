@@ -4,7 +4,7 @@ services:
 
   postgres:
     container_name: aouis-db
-    image: postgres
+    image: postgres:15-bullseye
     volumes:
       - .data/db:/var/lib/postgresql/data
     environment:
