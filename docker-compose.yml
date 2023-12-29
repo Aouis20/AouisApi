@@ -16,10 +16,16 @@ services:
 
   api:
     container_name: aouis-api
+    restart: always
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/app
+      - ./AouisApi:/app/AouisApi
+      - ./Products:/app/Products
+      - ./Accounts:/app/Accounts
+      - ./Categories:/app/Categories
+      - ./Transactions:/app/Transactions
+      - ./htmlcov:/app/htmlcov
     ports:
       - 8000:8000
     depends_on:
