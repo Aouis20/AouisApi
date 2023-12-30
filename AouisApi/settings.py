@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY").split(" ")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG").split(" ")
+DEBUG = os.environ.get("DEBUG")
 
 # Application definition
 
@@ -59,10 +59,10 @@ REST_FRAMEWORK = {
 # JWT Dev
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
-        datetime.timedelta(hours=24) if os.environ.get("TOKEN_TIMEOUT_DEV").split(" ") else datetime.timedelta(minutes=15)
+        datetime.timedelta(hours=24) if os.environ.get("TOKEN_TIMEOUT_DEV") else datetime.timedelta(minutes=15)
     ),
     "REFRESH_TOKEN_LIFETIME": (
-        datetime.timedelta(days=30) if os.environ.get("TOKEN_TIMEOUT_DEV").split(" ") else datetime.timedelta(days=1)
+        datetime.timedelta(days=30) if os.environ.get("TOKEN_TIMEOUT_DEV") else datetime.timedelta(days=1)
     ),
 }
 
