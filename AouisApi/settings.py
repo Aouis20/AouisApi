@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import datetime
-from json import loads
-from os import environ, environ
+import os
 from pathlib import Path
+
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = environ.get('DEBUG')
+DEBUG = os.environ.get("DEBUG")
 
 # Application definition
 
@@ -59,10 +59,10 @@ REST_FRAMEWORK = {
 # JWT Dev
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
-        datetime.timedelta(hours=24) if environ("TOKEN_TIMEOUT_DEV") else datetime.timedelta(minutes=5)
+        datetime.timedelta(hours=24) if os.environ.get("TOKEN_TIMEOUT_DEV") else datetime.timedelta(minutes=15)
     ),
     "REFRESH_TOKEN_LIFETIME": (
-        datetime.timedelta(days=30) if environ("TOKEN_TIMEOUT_DEV") else datetime.timedelta(days=1)
+        datetime.timedelta(days=30) if os.environ.get("TOKEN_TIMEOUT_DEV") else datetime.timedelta(days=1)
     ),
 }
 
@@ -112,8 +112,8 @@ DATABASES = {
     }
 }
 
-if environ.get('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.parse(environ.get('DATABASE_URL'))
+if os.environ.get("DATABASE_URL"):
+    DATABASES["default"] = dj_database_url.parse(os.environ.get("DATABASE_URL"))
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -160,7 +160,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "Accounts.User"
 
-FRONT_BASE_URL = environ.get("FRONT_BASE_URL").split(" ")
-ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS").split(" ")
-CORS_ALLOWED_ORIGINS = environ.get("CORS_ALLOWED_ORIGINS").split(" ")
-CSRF_TRUSTED_ORIGINS = environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+FRONT_BASE_URL = os.environ.get("FRONT_BASE_URL").split(" ")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
