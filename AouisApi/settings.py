@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import datetime
 from json import loads
-from os import getenv
+from os import environ, environ
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*(@a-6l2e_!pg7s4-&cfx3w(7yp#(h%1*ir1+nlll=p4a8%5=v"
+SECRET_KEY = environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG')
 
 # Application definition
 
@@ -58,10 +59,10 @@ REST_FRAMEWORK = {
 # JWT Dev
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": (
-        datetime.timedelta(hours=24) if getenv("TOKEN_TIMEOUT_DEV") else datetime.timedelta(minutes=5)
+        datetime.timedelta(hours=24) if environ("TOKEN_TIMEOUT_DEV") else datetime.timedelta(minutes=5)
     ),
     "REFRESH_TOKEN_LIFETIME": (
-        datetime.timedelta(days=30) if getenv("TOKEN_TIMEOUT_DEV") else datetime.timedelta(days=1)
+        datetime.timedelta(days=30) if environ("TOKEN_TIMEOUT_DEV") else datetime.timedelta(days=1)
     ),
 }
 
@@ -111,6 +112,9 @@ DATABASES = {
     }
 }
 
+if environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.parse(environ.get('DATABASE_URL'))
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -156,16 +160,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "Accounts.User"
 
-FRONT_BASE_URL = getenv("FRONT_BASE_URL", "http://localhost:3000")
-
-ALLOWED_HOSTS = []
-if getenv("ALLOWED_HOSTS"):
-    ALLOWED_HOSTS.extend(loads(getenv("ALLOWED_HOSTS")))
-
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
-if getenv("CORS_ORIGINS"):
-    CORS_ALLOWED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
-
-CSRF_TRUSTED_ORIGINS = []
-if getenv("CORS_ORIGINS"):
-    CSRF_TRUSTED_ORIGINS.extend(loads(getenv("CORS_ORIGINS")))
+FRONT_BASE_URL = environ.get("FRONT_BASE_URL").split(" ")
+ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS").split(" ")
+CORS_ALLOWED_ORIGINS = environ.get("CORS_ALLOWED_ORIGINS").split(" ")
+CSRF_TRUSTED_ORIGINS = environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
