@@ -16,6 +16,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = "__all__"
 
+
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     owner = UserSerializer()
@@ -29,6 +30,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class GetProductListSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=False)
     ids = serializers.ListField(child=serializers.IntegerField(), required=False)
+    category_id = serializers.IntegerField(required=False)
 
 
 class CreateProductSerializer(serializers.Serializer):
@@ -37,7 +39,7 @@ class CreateProductSerializer(serializers.Serializer):
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     payment = serializers.CharField(max_length=255, required=False)
     status = serializers.CharField(max_length=255, required=False)
-    category = serializers.IntegerField()
+    category = serializers.IntegerField(required=False)
     condition = serializers.CharField(max_length=255)
     is_service = serializers.BooleanField(default=False)
     images = serializers.ListField(child=serializers.ImageField(), required=False)
@@ -76,12 +78,6 @@ class CreateProductSerializer(serializers.Serializer):
         if status and status not in Product.ProductStatusEnum.values:
             raise ValidationError("Status type does not exists")
         return status
-
-    def validate_category(self, category_id):
-        if not Category.objects.filter(id=category_id):
-            raise ValidationError("Category does not exists")
-
-        return category_id
 
 
 class SearchProductSerializer(serializers.Serializer):

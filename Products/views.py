@@ -64,6 +64,7 @@ class ProductViewSet(
         serializer.is_valid(raise_exception=True)
         user_id = serializer.validated_data.get("user_id")
         ids = serializer.validated_data.get("ids")
+        category_id = serializer.validated_data.get("category_id")
 
         productList = Product.objects.all()
 
@@ -72,6 +73,9 @@ class ProductViewSet(
 
         if ids:
             productList = productList.filter(id__in=ids)
+
+        if category_id:
+            productList = productList.filter(category=category_id)
 
         paginator = ProductPagination()
         paginated_queryset = paginator.paginate_queryset(productList, request)
@@ -84,7 +88,7 @@ class ProductViewSet(
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        category_id = serializer.validated_data.get("category")
+        category_id = serializer.validated_data.get("category") or 1
         title = serializer.validated_data.get("title")
         description = serializer.validated_data.get("description", None)
         price = serializer.validated_data.get("price")
@@ -93,7 +97,7 @@ class ProductViewSet(
         payment = serializer.validated_data.get("payment", None)
         status = serializer.validated_data.get("status", None)
         condition = serializer.validated_data.get("condition", None)
-        images = serializer.validated_data.get("images")
+        images = serializer.validated_data.get("images", [])
 
         category = Category.objects.get(id=category_id)
         owner = User.objects.get(email=request.user)
@@ -110,7 +114,7 @@ class ProductViewSet(
                     is_service=is_service,
                     owner=owner,
                 )
-                if images:
+                if len(images):
                     for image in images:
                         product_image = ProductImage.objects.create(product=product, image=image)
                         product_image.save()
